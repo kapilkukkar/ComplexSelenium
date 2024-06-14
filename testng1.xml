@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Banking">
+	<test thread-count="5" name="Test">
+		<classes>
+			<class name="Learning.Testing.AppTest"></class>
+
+
+			<class name="Learning.Testing.TestNGDemo">
+				<methods>
+					<exclude name="verify"></exclude>
+				</methods>
+			</class>
+			<class name="Learning.Testing.Current2" />
+
+			<class name="Learning.Testing.Current1">
+
+			</class>
+			<class name="Learning.Testing.TestNGexp" />
+
+
+
+
+
+		</classes>
+
+
+	</test> <!-- Test -->
+</suite> <!-- Banking -->

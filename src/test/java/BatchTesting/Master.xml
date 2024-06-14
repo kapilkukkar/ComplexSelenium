@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="master">
+
+	<suite-files>
+		<suite-file
+			path="C:\Users\kumar\eclipse-workspace\Testing\src\test\java\BatchTesting\Sanity.xml" />
+		<suite-file
+			path="C:\Users\kumar\eclipse-workspace\Testing\src\test\java\BatchTesting\performace.xml" />
+	</suite-files>
+</suite>
