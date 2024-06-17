@@ -1,5 +1,7 @@
 package Ecommerce_Framework;
 
+import static org.testng.Assert.assertEquals;
+
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.Toolkit;
@@ -210,6 +212,65 @@ public class Login_page
 		driver.findElement(By.xpath("//button[normalize-space()='Ok']")).click();
 		
 		
+	}
+	@Test()
+	public void delete_record() throws InterruptedException
+	{
+		login();
+		driver.findElement(By.xpath("//span[text()='PIM']")).click();
+		Thread.sleep(2500);
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("window.scrollBy(0,500)");
+		WebElement first_name=driver.findElement(By.xpath("(//div[@class='oxd-table-cell oxd-padding-cell'])[3]"));
+		String text= first_name.getText();
+		System.out.println(first_name.getText());		
+		driver.findElements(By.tagName("input")).get(1).sendKeys(text);
+		driver.findElement(By.xpath("//button[@type='submit']")).click();
+		WebElement resultElement=driver.findElement(By.xpath("(//span[@class='oxd-text oxd-text--span'])[1]"));
+		if(!resultElement.getText().equals("No Records Found"))
+		{
+			driver.findElement(By.xpath("(//div[@class='oxd-table-header-cell oxd-padding-cell oxd-table-th'])[1]")).click();
+			Thread.sleep(2500);
+			driver.findElement(By.xpath("//button[normalize-space()='Delete Selected']")).click();
+			driver.findElement(By.xpath("//button[normalize-space()='Yes, Delete']")).click();	
+			Thread.sleep(2500);
+			assertEquals(resultElement.getText(), "No Records Found", "Test Passed");			
+			
+		}
+
+		
+	}
+	@Test
+	public void print_employee_list() throws InterruptedException
+	{
+		login();
+		driver.findElement(By.xpath("//span[text()='PIM']")).click();
+		Thread.sleep(2500);
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("window.scrollBy(0,3000)");
+		List<WebElement> list= driver.findElements(By.xpath("//ul[@class='oxd-pagination__ul']//li"));
+		js.executeScript("window.scrollBy(3000,-45)");
+		Thread.sleep(2500);
+		for(WebElement element:list)
+		{
+			
+			List<WebElement> row_list = driver.findElements(By.xpath("//div[@class='oxd-table-body']//div[@class='oxd-table-card']"));
+			System.out.println(row_list.size());
+			Thread.sleep(1500);
+			for(int i=3;i<=row_list.size()+1;i++)
+			{
+//				WebElement chkbox=driver.findElement(By.xpath("((//div[@role='row'])["+(i-2)+"]//div[@role='cell'])[1]"));
+//				chkbox.click();
+//				Thread.sleep(500);
+				String nameString=driver.findElement(By.xpath("((//div[@role='row'])["+i+"]//div[@role='cell'])[3]")).getText();
+				String employee_nameString= driver.findElement(By.xpath("((//div[@role='row'])["+i+"]//div[@role='cell'])[4]")).getText();
+				System.out.println(nameString+ "   " + employee_nameString);
+			}
+			element.click();
+			System.out.println("1st page="+ row_list.size());
+
+			
+		}
 	}
 	@Test
 	public void apply_for_leave() throws InterruptedException
