@@ -17,7 +17,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.ExpectedConditions ;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -31,9 +32,10 @@ import com.github.javafaker.Faker;
 public class Login_page
 {
 	public WebDriver driver;
+	WebDriverWait wait;
 	Faker faker=new Faker();
 	public String url= "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login";
-	
+
 	public String name= faker.name().firstName();
 	public void login()
 	{
@@ -46,6 +48,43 @@ public class Login_page
 		driver.findElement(By.xpath("//span[@class='oxd-userdropdown-tab']")).click();
 		driver.findElement(By.xpath("//a[normalize-space()='Logout']")).click();
 	}
+	public void leave_page_calender(String month,String year,String day)
+	{
+		wait= new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[@class='oxd-calendar-selector-month']"))).click();
+		String monthdropdown_xpath = "//ul[@class='oxd-calendar-dropdown']//li";
+		List<WebElement> monthList = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(monthdropdown_xpath)));
+		for (WebElement element : monthList) 
+		{
+			if (element.getText().equals(month)) 
+			{
+				element.click();
+				break;
+			}
+		}		
+		String year_dropdown_xpath = "//ul[@class='oxd-calendar-dropdown']//li";
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[@class='oxd-calendar-selector-year']//p[1]"))).click();
+		List<WebElement> yearList = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(year_dropdown_xpath)));
+		for (WebElement element : yearList) 
+		{
+			if (element.getText().equals(year)) 
+			{
+				element.click();
+				break;
+			}
+		}		
+		String day_xpath = "//div[@class='oxd-calendar-dates-grid']/div[position() <= 31]";
+		List<WebElement> dayList = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(day_xpath)));
+		for (WebElement element : dayList)
+		{
+			if (element.getText().equals(day)) 
+			{
+				element.click();
+				break;
+			}
+		}
+	}
+
 	@BeforeMethod
 	public void set_up() throws InterruptedException
 	{
@@ -164,7 +203,7 @@ public class Login_page
 		driver.findElement(By.xpath("//span[text()='PIM']")).click();
 		driver.findElements(By.tagName("input")).get(1).sendKeys(name);
 		List<WebElement> list= driver.findElements(By.xpath("driver.findElements(By.tagName(\"input\")).get(1).sendKeys(name);"));
-		
+
 	}
 	@Test
 	public void handle_table() throws InterruptedException
@@ -176,14 +215,14 @@ public class Login_page
 		js.executeScript("arguments[0].scrollIntoView()", element);
 		Thread.sleep(2500);
 		List<WebElement> row_list = driver.findElements(By.xpath("//div[@class='oxd-table-body']//div[@class='oxd-table-card']"));
-		
+
 		for(int i=3;i<=row_list.size()+1;i++)
 		{
 			String nameString=driver.findElement(By.xpath("((//div[@role='row'])["+i+"]//div[@role='cell'])[2]")).getText();
 			String employee_nameString= driver.findElement(By.xpath("((//div[@role='row'])["+i+"]//div[@role='cell'])[4]")).getText();
 			System.out.println(nameString+ "  " + employee_nameString);
 		}
-		
+
 	}
 	@Test
 	public void File_upload() throws AWTException, InterruptedException
@@ -210,8 +249,8 @@ public class Login_page
 		driver.findElement(By.xpath("//button[@type='submit']")).click();
 		Thread.sleep(2500);
 		driver.findElement(By.xpath("//button[normalize-space()='Ok']")).click();
-		
-		
+
+
 	}
 	@Test()
 	public void delete_record() throws InterruptedException
@@ -235,58 +274,119 @@ public class Login_page
 			driver.findElement(By.xpath("//button[normalize-space()='Yes, Delete']")).click();	
 			Thread.sleep(2500);
 			assertEquals(resultElement.getText(), "No Records Found", "Test Passed");			
-			
+
 		}
 
-		
+
+	}
+	@Test
+	public void ttetedg()
+	{
+		login();
+
+		// Navigate to PIM section
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		WebElement pimElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='PIM']")));
+		pimElement.click();
+
+		// Scroll down the page
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("window.scrollBy(0,500)");
+
+		// Find and print the first name of the first record
+		WebElement firstNameElement = driver.findElement(By.xpath("(//div[@class='oxd-table-cell oxd-padding-cell'])[3]"));
+		String text = firstNameElement.getText();
+		System.out.println(text);
+
+		// Enter the first name in the search input field and submit the search
+		driver.findElements(By.tagName("input")).get(1).sendKeys(text);
+		driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+		// Wait for the result element to be present
+		WebElement resultElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("(//span[@class='oxd-text oxd-text--span'])[1]")));
+		if (!resultElement.getText().equals("No Records Found")) {
+			// Select the first record
+			WebElement headerCheckbox = driver.findElement(By.xpath("(//div[@class='oxd-table-header-cell oxd-padding-cell oxd-table-th'])[1]"));
+			headerCheckbox.click();
+
+			// Click the delete button and confirm the deletion
+			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[normalize-space()='Delete Selected']"))).click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[normalize-space()='Yes, Delete']"))).click();
+
+			// Wait for the result element to reflect the deletion
+			wait.until(ExpectedConditions.textToBe(By.xpath("(//span[@class='oxd-text oxd-text--span'])[1]"), "No Records Found"));
+
+			// Verify that no records are found after deletion
+			resultElement = driver.findElement(By.xpath("(//span[@class='oxd-text oxd-text--span'])[1]"));
+			assertEquals(resultElement.getText(), "No Records Found", "Test Passed");
+		}
 	}
 	@Test
 	public void print_employee_list() throws InterruptedException
 	{
 		login();
 		driver.findElement(By.xpath("//span[text()='PIM']")).click();
-		Thread.sleep(2500);
 		JavascriptExecutor js = (JavascriptExecutor) driver;
-		js.executeScript("window.scrollBy(0,3000)");
-		List<WebElement> list= driver.findElements(By.xpath("//ul[@class='oxd-pagination__ul']//li"));
-		js.executeScript("window.scrollBy(3000,-45)");
+		js.executeScript("window.scrollBy(0, 3000)");
 		Thread.sleep(2500);
-		for(WebElement element:list)
+		List<WebElement> paginationList = driver.findElements(By.xpath("//ul[@class='oxd-pagination__ul']//li"));
+		System.out.println(paginationList.size());
+		for (int pageIndex = 1; pageIndex <= paginationList.size(); pageIndex++) 
 		{
-			
-			List<WebElement> row_list = driver.findElements(By.xpath("//div[@class='oxd-table-body']//div[@class='oxd-table-card']"));
-			System.out.println(row_list.size());
-			Thread.sleep(1500);
-			for(int i=3;i<=row_list.size()+1;i++)
+			List<WebElement> rowList = driver.findElements(By.xpath("//div[@class='oxd-table-body']//div[@class='oxd-table-card']"));
+			System.out.println("Page " + pageIndex + " has " + rowList.size() + " rows.");		
+			for (int rowIndex = 1; rowIndex <= rowList.size(); rowIndex++) 
+			{				
+				WebElement chkbox = driver.findElement(By.xpath("(//div[@class='oxd-table-body']//div[@class='oxd-table-card'])[" + (rowIndex+1) + "]//div[@class='oxd-checkbox-wrapper']"));
+				chkbox.click();
+				Thread.sleep(200);				
+				String name = driver.findElement(By.xpath("(//div[@class='oxd-table-body']//div[@class='oxd-table-card'])[" + rowIndex + "]//div[@role='cell'][3]")).getText();
+				String employeeName = driver.findElement(By.xpath("(//div[@class='oxd-table-body']//div[@class='oxd-table-card'])[" + rowIndex + "]//div[@role='cell'][4]")).getText();
+				System.out.println(name + "   " + employeeName);
+			}			
+			if (pageIndex < paginationList.size()) 
 			{
-//				WebElement chkbox=driver.findElement(By.xpath("((//div[@role='row'])["+(i-2)+"]//div[@role='cell'])[1]"));
-//				chkbox.click();
-//				Thread.sleep(500);
-				String nameString=driver.findElement(By.xpath("((//div[@role='row'])["+i+"]//div[@role='cell'])[3]")).getText();
-				String employee_nameString= driver.findElement(By.xpath("((//div[@role='row'])["+i+"]//div[@role='cell'])[4]")).getText();
-				System.out.println(nameString+ "   " + employee_nameString);
+				paginationList = driver.findElements(By.xpath("//ul[@class='oxd-pagination__ul']//li"));
+				paginationList.get(pageIndex).click();
+				Thread.sleep(2500);
 			}
-			element.click();
-			System.out.println("1st page="+ row_list.size());
-
-			
 		}
 	}
 	@Test
 	public void apply_for_leave() throws InterruptedException
 	{
 		login();
-		Thread.sleep(2500);
-		driver.findElement(By.xpath("(//ul[@class='oxd-main-menu']//li)[3]//span")).click();
-		driver.findElement(By.xpath("(//li[@class='oxd-topbar-body-nav-tab'])[1]")).click();
-		driver.findElement(By.xpath("//div[@class='oxd-select-text-input']")).click();
-		Thread.sleep(2500);
-		driver.findElement(By.xpath("//div[@class='oxd-select-text--after']")).click();
-		String monthdropdown_xpath="//ul[@class='oxd-calendar-dropdown']//li";		
-		String year_dropdown_xpath="//ul[@class='oxd-calendar-dropdown']//li";
-		String day_xpath="//div[@class='oxd-calendar-dates-grid']/div[position() <= 31]";
-		
+		wait = new WebDriverWait(driver, Duration.ofSeconds(10));		
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//ul[@class='oxd-main-menu']//li)[3]//span"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//li[@class='oxd-topbar-body-nav-tab'])[1]"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@class='oxd-select-text-input']"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[contains(text(),'CAN')]"))).click();		
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//input[@class='oxd-input oxd-input--active'])[3]"))).click();
+		leave_page_calender("July", "2024","25");
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//input[@class='oxd-input oxd-input--active'])[2]"))).click();
+		leave_page_calender("July", "2024","25");
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//i[@class='oxd-icon bi-caret-down-fill oxd-select-text--arrow'])[2]"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[contains(text(),'Specify Time')]"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//i[@class='oxd-icon bi-clock oxd-time-input--clock'])[1]"))).click();
+		for(int i=0;i<=3;i++)
+		{
+			WebElement hour_up_button= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//i[@class='oxd-icon bi-chevron-up oxd-icon-button__icon oxd-time-hour-input-up']")));
+			hour_up_button.click();
+		}
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//div[@class='oxd-time-period-label'])[2]"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//i[@class='oxd-icon bi-clock oxd-time-input--clock'])[2]"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//i[@class='oxd-icon bi-chevron-down oxd-icon-button__icon oxd-time-hour-input-down']"))).click();
+		for(int i=0;i<=3;i++)
+		{
+			WebElement minute_up_button= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//i[@class='oxd-icon bi-chevron-up oxd-icon-button__icon oxd-time-minute-input-up']")));
+			minute_up_button.click();
+		}
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div//textarea"))).sendKeys(faker.lorem().paragraph(2));
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@type='submit']"))).click();
+
 	}
+
+
 	@AfterMethod	
 	public void tear_down() throws InterruptedException
 	{
@@ -295,3 +395,4 @@ public class Login_page
 	}
 
 }
+//i[@class='oxd-icon bi-chevron-up oxd-icon-button__icon oxd-time-minute-input-up']
