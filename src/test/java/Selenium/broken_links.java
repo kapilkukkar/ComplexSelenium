@@ -35,15 +35,32 @@ public class broken_links
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		
 	}
-	@Test(enabled=false)
-	public void get_all_url() throws InterruptedException
+	@Test()
+	public void get_all_url() throws InterruptedException, IOException
 	{
 		List<WebElement> links= driver.findElements(By.tagName("a"));
 		System.out.println(links.size());
 		for(WebElement link: links)
 		{
 			String urls= link.getAttribute("href");
-			System.out.println(urls);
+			if(urls!= null)
+			{
+				URL create_url=new URL(urls);
+				HttpURLConnection httpconection= (HttpURLConnection) create_url.openConnection();
+				httpconection.setRequestMethod("HEAD");
+				httpconection.connect();
+				int responseCode=httpconection.getResponseCode();
+				if(responseCode==200)
+				{
+					System.out.println("Valid link");
+				}
+				else
+				{
+					System.out.println("Broken Link");
+					
+				}
+			}
+			
 			Thread.sleep(1000);
 		}
 		

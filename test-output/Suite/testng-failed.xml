@@ -1,28 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Failed suite [Suite]" guice-stage="DEVELOPMENT">
+  <listeners>
+    <listener class-name="BlazeDemo.ExtentListner"/>
+  </listeners>
   <test thread-count="5" name="Test(failed)">
-    <parameter name="url" value="http://www.zlti.com"/>
     <classes>
-      <class name="Selenium.broken_links">
+      <class name="BlazeDemo.PracticeTable">
         <methods>
-          <include name="set_up"/>
-          <include name="broken_link"/>
-          <include name="tear_down"/>
+          <include name="test_04"/>
+          <include name="test_03"/>
+          <include name="setup"/>
+          <include name="teardown"/>
         </methods>
-      </class> <!-- Selenium.broken_links -->
+      </class> <!-- BlazeDemo.PracticeTable -->
     </classes>
   </test> <!-- Test(failed) -->
-  <test thread-count="5" name="Test1(failed)">
-    <parameter name="url" value="http://www.deadlinkcity.com/"/>
-    <classes>
-      <class name="Selenium.broken_links">
-        <methods>
-          <include name="set_up"/>
-          <include name="broken_link"/>
-          <include name="tear_down"/>
-        </methods>
-      </class> <!-- Selenium.broken_links -->
-    </classes>
-  </test> <!-- Test1(failed) -->
 </suite> <!-- Failed suite [Suite] -->

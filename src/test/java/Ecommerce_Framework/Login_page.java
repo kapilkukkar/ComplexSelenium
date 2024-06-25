@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.util.List;
 
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -18,13 +17,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions ;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.github.javafaker.Faker;
@@ -304,19 +300,13 @@ public class Login_page
 
 		// Wait for the result element to be present
 		WebElement resultElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("(//span[@class='oxd-text oxd-text--span'])[1]")));
-		if (!resultElement.getText().equals("No Records Found")) {
-			// Select the first record
+		if (!resultElement.getText().equals("No Records Found")) 
+		{
 			WebElement headerCheckbox = driver.findElement(By.xpath("(//div[@class='oxd-table-header-cell oxd-padding-cell oxd-table-th'])[1]"));
 			headerCheckbox.click();
-
-			// Click the delete button and confirm the deletion
 			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[normalize-space()='Delete Selected']"))).click();
 			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[normalize-space()='Yes, Delete']"))).click();
-
-			// Wait for the result element to reflect the deletion
 			wait.until(ExpectedConditions.textToBe(By.xpath("(//span[@class='oxd-text oxd-text--span'])[1]"), "No Records Found"));
-
-			// Verify that no records are found after deletion
 			resultElement = driver.findElement(By.xpath("(//span[@class='oxd-text oxd-text--span'])[1]"));
 			assertEquals(resultElement.getText(), "No Records Found", "Test Passed");
 		}
@@ -395,4 +385,3 @@ public class Login_page
 	}
 
 }
-//i[@class='oxd-icon bi-chevron-up oxd-icon-button__icon oxd-time-minute-input-up']

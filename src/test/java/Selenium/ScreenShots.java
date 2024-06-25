@@ -68,6 +68,7 @@ public class ScreenShots
 	{
 		File screenshot=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 		FileHandler.copy(screenshot, new File("screenshots\\title1.png"));
+	
 	}
 	@Test
 	public void take_webelement_Screenshot() throws IOException
